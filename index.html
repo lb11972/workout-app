@@ -10,15 +10,15 @@
 
 body{
 font-family:Arial;
-background:#121212;
+background:#0f172a;
 color:white;
 margin:0;
 text-align:center;
 }
 
 .header{
-background:#1f1f1f;
-padding:15px;
+background:#020617;
+padding:18px;
 font-size:22px;
 font-weight:bold;
 }
@@ -28,42 +28,57 @@ padding:20px;
 }
 
 .card{
-background:#1e1e1e;
-border-radius:12px;
+background:#1e293b;
+border-radius:14px;
 padding:20px;
 margin:15px auto;
 max-width:420px;
-box-shadow:0 4px 12px rgba(0,0,0,0.4);
+box-shadow:0 6px 16px rgba(0,0,0,0.4);
 }
 
 button{
-background:#00c853;
+background:#22c55e;
 border:none;
 padding:12px;
-margin:6px;
+margin:8px;
 color:white;
-border-radius:8px;
+border-radius:10px;
 font-size:16px;
 width:85%;
+cursor:pointer;
+}
+
+button:hover{
+background:#16a34a;
 }
 
 .secondary{
-background:#2962ff;
+background:#3b82f6;
 }
 
 .exercise{
-font-size:24px;
+font-size:26px;
 margin-top:10px;
 }
 
+.details{
+font-size:18px;
+opacity:0.9;
+}
+
 .timer{
-font-size:30px;
+font-size:32px;
 margin-top:10px;
 }
 
 .warning{
-color:#ff5252;
+color:#f87171;
 margin-top:10px;
+font-size:14px;
+}
+
+.icon{
+font-size:34px;
 }
 
 </style>
@@ -73,7 +88,7 @@ margin-top:10px;
 <body>
 
 <div class="header">
-Workout App
+🏋️ Workout App
 </div>
 
 <div class="container">
@@ -82,7 +97,7 @@ Workout App
 
 <button onclick="startGuided()">▶ Allenamento di oggi</button>
 
-<button onclick="startWarmup()">🔥 Solo riscaldamento</button>
+<button onclick="startWarmup()">🔥 Riscaldamento</button>
 
 <button onclick="startWorkoutA()">🦵 Gambe</button>
 
@@ -94,9 +109,11 @@ Workout App
 
 <div class="card">
 
+<div class="icon" id="icon"></div>
+
 <div class="exercise" id="exercise"></div>
 
-<div id="details"></div>
+<div class="details" id="details"></div>
 
 <div class="warning" id="warning"></div>
 
@@ -119,6 +136,7 @@ Workout App
 <div class="timer" id="timer"></div>
 
 <button onclick="startTimer(60)">60s</button>
+
 <button onclick="startTimer(90)">90s</button>
 
 </div>
@@ -148,12 +166,12 @@ function startWarmup(){
 
 exercises=[
 
-{n:"Mobilità",d:"Gatto – Sfinge / Devoto"},
-{n:"Tapis roulant",d:"10 min"},
-{n:"Skip basso",d:"20 sec"},
-{n:"Skip alto",d:"20 sec"},
-{n:"Calciata",d:"20 sec"},
-{n:"Flessione lombare",d:"2 serie"}
+{i:"🧘",n:"Mobilità",d:"Gatto – Sfinge / Devoto"},
+{i:"🏃",n:"Tapis roulant",d:"10 min"},
+{i:"⚡",n:"Skip basso",d:"20 sec"},
+{i:"⚡",n:"Skip alto",d:"20 sec"},
+{i:"⚡",n:"Calciata",d:"20 sec"},
+{i:"🦴",n:"Flessione lombare",d:"2 serie"}
 
 ]
 
@@ -166,12 +184,12 @@ function startWorkoutA(){
 
 exercises=[
 
-{n:"Squat",d:"4 x 10"},
-{n:"Sumo Squat",d:"4 x 10"},
-{n:"Leg Extension",d:"3 x 12"},
-{n:"Leg Curl",d:"3 x 12"},
-{n:"Affondi",d:"3 x 10"},
-{n:"Stacco Rumeno",d:"3 x 10"}
+{i:"🏋️",n:"Squat",d:"4 x 10"},
+{i:"🏋️",n:"Sumo Squat",d:"4 x 10"},
+{i:"🦵",n:"Leg Extension",d:"3 x 12"},
+{i:"🦵",n:"Leg Curl",d:"3 x 12"},
+{i:"🚶",n:"Affondi",d:"3 x 10"},
+{i:"🏋️",n:"Stacco Rumeno",d:"3 x 10"}
 
 ]
 
@@ -184,12 +202,12 @@ function startWorkoutB(){
 
 exercises=[
 
-{n:"Push Up",d:"4 x 10"},
-{n:"Lat Machine",d:"4 x 10"},
-{n:"Pull Down",d:"4 x 10"},
-{n:"Shoulder Press",d:"3 x 12"},
-{n:"Alzate Laterali",d:"3 x 10"},
-{n:"Rematore",d:"3 x 10"}
+{i:"💪",n:"Push Up",d:"4 x 10"},
+{i:"💪",n:"Lat Machine",d:"4 x 10"},
+{i:"💪",n:"Pull Down",d:"4 x 10"},
+{i:"🏋️",n:"Shoulder Press",d:"3 x 12"},
+{i:"💪",n:"Alzate Laterali",d:"3 x 10"},
+{i:"💪",n:"Rematore",d:"3 x 10"}
 
 ]
 
@@ -202,10 +220,10 @@ function startCore(){
 
 exercises=[
 
-{n:"Dead Bug",d:"30 sec"},
-{n:"Mountain Climber",d:"30 sec"},
-{n:"Plank SX",d:"30 sec"},
-{n:"Plank DX",d:"30 sec"}
+{i:"🧠",n:"Dead Bug",d:"30 sec"},
+{i:"🔥",n:"Mountain Climber",d:"30 sec"},
+{i:"🧠",n:"Plank SX",d:"30 sec"},
+{i:"🧠",n:"Plank DX",d:"30 sec"}
 
 ]
 
@@ -218,6 +236,7 @@ function show(){
 
 let ex=exercises[index]
 
+document.getElementById("icon").innerText=ex.i
 document.getElementById("exercise").innerText=ex.n
 document.getElementById("details").innerText=ex.d
 
@@ -271,7 +290,7 @@ clearInterval(countdown)
 
 document.getElementById("timer").innerText="FINE"
 
-let beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
+let beep=new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
 
 beep.play()
 
