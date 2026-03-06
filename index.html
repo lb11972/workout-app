@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta charset="UTF-8">
 <title>Scheda Allenamento</title>
 
 <style>
+
 body{
 font-family:Arial;
-background:#f4f4f4;
+background:#f2f2f2;
 text-align:center;
 }
 
@@ -22,14 +24,15 @@ box-shadow:0 0 10px rgba(0,0,0,0.2);
 
 button{
 padding:10px;
-margin:5px;
+margin:10px;
 font-size:16px;
 }
 
 .timer{
-font-size:30px;
-margin:10px;
+font-size:28px;
+margin-top:10px;
 }
+
 </style>
 </head>
 
@@ -39,37 +42,15 @@ margin:10px;
 
 <h1>Scheda Allenamento</h1>
 
-<h2>Mobilità</h2>
-<p>Gatto – Sfinge</p>
-<p>Devoto</p>
-<p>Rotazioni schiena</p>
+<h2 id="exercise"></h2>
+<p id="details"></p>
 
-<h2>Riscaldamento</h2>
-<p>Tapis roulant 10 min</p>
-<p>Skip basso 20s</p>
-<p>Skip alto 20s</p>
-<p>Calciata 20s</p>
+<button onclick="nextExercise()">Prossimo esercizio</button>
 
-<h2>Attivazione lombare</h2>
-<p>Flessione lombare – 2 serie</p>
+<br>
 
-<h2>Allenamento</h2>
-
-<p>Squat 4x10</p>
-<p>Sumo squat 4x10</p>
-<p>Leg extension 3x12</p>
-<p>Leg curl 3x12</p>
-<p>Affondi 3x10</p>
-<p>Stacco rumeno 3x10</p>
-
-<h2>Core</h2>
-<p>Dead bug 30s</p>
-<p>Mountain climber 30s</p>
-<p>Plank sx 30s</p>
-<p>Plank dx 30s</p>
-
-<button onclick="startTimer(60)">Timer 60s</button>
-<button onclick="startTimer(90)">Timer 90s</button>
+<button onclick="startTimer(60)">Recupero 60s</button>
+<button onclick="startTimer(90)">Recupero 90s</button>
 
 <div class="timer" id="timer"></div>
 
@@ -77,32 +58,98 @@ margin:10px;
 
 <script>
 
+const exercises = [
+
+{ name:"Mobilità", details:"Gatto – Sfinge / Devoto / Rotazioni schiena" },
+
+{ name:"Riscaldamento", details:"Tapis roulant 10 min" },
+
+{ name:"Riscaldamento", details:"Skip basso 20 sec" },
+
+{ name:"Riscaldamento", details:"Skip alto 20 sec" },
+
+{ name:"Riscaldamento", details:"Calciata 20 sec" },
+
+{ name:"Attivazione lombare", details:"Flessione lombare – 2 serie" },
+
+{ name:"Squat", details:"4 x 10" },
+
+{ name:"Sumo Squat", details:"4 x 10" },
+
+{ name:"Leg Extension", details:"3 x 10-12" },
+
+{ name:"Leg Curl", details:"3 x 10-12" },
+
+{ name:"Affondi", details:"3 x 10 per gamba" },
+
+{ name:"Stacco Rumeno", details:"3 x 10-12" },
+
+{ name:"Dead Bug", details:"30 sec" },
+
+{ name:"Mountain Climber", details:"30 sec" },
+
+{ name:"Plank laterale SX", details:"30 sec" },
+
+{ name:"Plank laterale DX", details:"30 sec" },
+
+{ name:"Stretching", details:"Gambe / Schiena / Anche" }
+
+]
+
+let index=0
+
+function showExercise(){
+
+document.getElementById("exercise").innerText = exercises[index].name
+
+document.getElementById("details").innerText = exercises[index].details
+
+}
+
+function nextExercise(){
+
+index++
+
+if(index >= exercises.length){
+index = 0
+}
+
+showExercise()
+
+}
+
 let countdown
 
 function startTimer(seconds){
 
 clearInterval(countdown)
 
-let time=seconds
+let time = seconds
 
-document.getElementById("timer").innerText=time
+document.getElementById("timer").innerText = time
 
-countdown=setInterval(function(){
+countdown = setInterval(function(){
 
 time--
 
-document.getElementById("timer").innerText=time
+document.getElementById("timer").innerText = time
 
-if(time<=0){
+if(time <= 0){
+
 clearInterval(countdown)
-document.getElementById("timer").innerText="FINE"
+
+document.getElementById("timer").innerText = "FINE"
+
 }
 
 },1000)
 
 }
 
+showExercise()
+
 </script>
 
 </body>
+
 </html>
