@@ -275,6 +275,10 @@ let beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg
 
 beep.play()
 
+if(navigator.vibrate){
+navigator.vibrate(500)
+}
+
 }
 
 },1000)
