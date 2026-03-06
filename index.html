@@ -129,7 +129,6 @@ Workout App
 
 let exercises=[]
 let index=0
-let sets=0
 
 function startGuided(){
 
@@ -272,6 +271,10 @@ clearInterval(countdown)
 
 document.getElementById("timer").innerText="FINE"
 
+let beep = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
+
+beep.play()
+
 }
 
 },1000)
@@ -281,4 +284,5 @@ document.getElementById("timer").innerText="FINE"
 </script>
 
 </body>
+
 </html>
