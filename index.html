@@ -1,56 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Scheda Allenamento</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f4f4f4;
+text-align:center;
+}
+
+.container{
+max-width:500px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+button{
+padding:10px;
+margin:5px;
+font-size:16px;
+}
+
+.timer{
+font-size:30px;
+margin:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
 <h1>Scheda Allenamento</h1>
 
 <h2>Mobilità</h2>
-<ul>
-<li>Gatto – Sfinge</li>
-<li>Devoto</li>
-<li>Rotazioni schiena</li>
-</ul>
+<p>Gatto – Sfinge</p>
+<p>Devoto</p>
+<p>Rotazioni schiena</p>
 
 <h2>Riscaldamento</h2>
-<ul>
-<li>Tapis roulant – 10 min</li>
-<li>Skip basso – 20 sec</li>
-<li>Skip alto – 20 sec</li>
-<li>Calciata – 20 sec</li>
-</ul>
+<p>Tapis roulant 10 min</p>
+<p>Skip basso 20s</p>
+<p>Skip alto 20s</p>
+<p>Calciata 20s</p>
 
 <h2>Attivazione lombare</h2>
-<ul>
-<li>Flessione lombare – 2 serie</li>
-</ul>
+<p>Flessione lombare – 2 serie</p>
 
-<h2>Allenamento A – Gambe</h2>
-<ul>
-<li>Squat – 4x10</li>
-<li>Sumo squat – 4x10</li>
-<li>Leg extension – 3x10-12</li>
-<li>Leg curl – 3x10-12</li>
-<li>Affondi – 3x10 per gamba</li>
-<li>Stacco rumeno – 3x10-12</li>
-</ul>
+<h2>Allenamento</h2>
 
-<h2>Allenamento B – Parte alta</h2>
-<ul>
-<li>Push up – 4x10</li>
-<li>Lat machine – 4x10</li>
-<li>Pull down – 4x10-12</li>
-<li>Shoulder press – 3x10-12</li>
-<li>Alzate laterali – 3x10</li>
-<li>Rematore manubrio – 3x10</li>
-</ul>
+<p>Squat 4x10</p>
+<p>Sumo squat 4x10</p>
+<p>Leg extension 3x12</p>
+<p>Leg curl 3x12</p>
+<p>Affondi 3x10</p>
+<p>Stacco rumeno 3x10</p>
 
 <h2>Core</h2>
-<ul>
-<li>Dead bug – 30 sec</li>
-<li>Mountain climber – 30 sec</li>
-<li>Plank laterale sx – 30 sec</li>
-<li>Plank laterale dx – 30 sec</li>
-</ul>
+<p>Dead bug 30s</p>
+<p>Mountain climber 30s</p>
+<p>Plank sx 30s</p>
+<p>Plank dx 30s</p>
 
-<h2>Stretching</h2>
-<ul>
-<li>Stretching gambe</li>
-<li>Stretching schiena</li>
-<li>Stretching anche</li>
-</ul>
+<button onclick="startTimer(60)">Timer 60s</button>
+<button onclick="startTimer(90)">Timer 90s</button>
+
+<div class="timer" id="timer"></div>
+
+</div>
+
+<script>
+
+let countdown
+
+function startTimer(seconds){
+
+clearInterval(countdown)
+
+let time=seconds
+
+document.getElementById("timer").innerText=time
+
+countdown=setInterval(function(){
+
+time--
+
+document.getElementById("timer").innerText=time
+
+if(time<=0){
+clearInterval(countdown)
+document.getElementById("timer").innerText="FINE"
+}
+
+},1000)
+
+}
+
+</script>
+
+</body>
+</html>
