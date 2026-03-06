@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta charset="UTF-8">
-<title>Scheda Allenamento</title>
+<title>Workout App</title>
 
 <style>
 
@@ -23,24 +22,38 @@ box-shadow:0 0 10px rgba(0,0,0,0.2);
 }
 
 button{
-padding:10px;
+padding:12px;
 margin:10px;
 font-size:16px;
+width:80%;
 }
 
 .timer{
-font-size:28px;
+font-size:30px;
 margin-top:10px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>Scheda Allenamento</h1>
+<h1>Workout App</h1>
+
+<div id="menu">
+
+<button onclick="startWarmup()">🔥 Riscaldamento</button>
+
+<button onclick="startWorkoutA()">🦵 Allenamento A</button>
+
+<button onclick="startWorkoutB()">💪 Allenamento B</button>
+
+<button onclick="startCore()">🧠 Core</button>
+
+</div>
 
 <h2 id="exercise"></h2>
 <p id="details"></p>
@@ -58,51 +71,83 @@ margin-top:10px;
 
 <script>
 
-const exercises = [
+let exercises=[]
+let index=0
 
-{ name:"Mobilità", details:"Gatto – Sfinge / Devoto / Rotazioni schiena" },
+function startWarmup(){
 
-{ name:"Riscaldamento", details:"Tapis roulant 10 min" },
+exercises=[
 
-{ name:"Riscaldamento", details:"Skip basso 20 sec" },
-
-{ name:"Riscaldamento", details:"Skip alto 20 sec" },
-
-{ name:"Riscaldamento", details:"Calciata 20 sec" },
-
-{ name:"Attivazione lombare", details:"Flessione lombare – 2 serie" },
-
-{ name:"Squat", details:"4 x 10" },
-
-{ name:"Sumo Squat", details:"4 x 10" },
-
-{ name:"Leg Extension", details:"3 x 10-12" },
-
-{ name:"Leg Curl", details:"3 x 10-12" },
-
-{ name:"Affondi", details:"3 x 10 per gamba" },
-
-{ name:"Stacco Rumeno", details:"3 x 10-12" },
-
-{ name:"Dead Bug", details:"30 sec" },
-
-{ name:"Mountain Climber", details:"30 sec" },
-
-{ name:"Plank laterale SX", details:"30 sec" },
-
-{ name:"Plank laterale DX", details:"30 sec" },
-
-{ name:"Stretching", details:"Gambe / Schiena / Anche" }
+{n:"Mobilità",d:"Gatto – Sfinge / Devoto / Rotazioni schiena"},
+{n:"Tapis roulant",d:"10 minuti"},
+{n:"Skip basso",d:"20 sec"},
+{n:"Skip alto",d:"20 sec"},
+{n:"Calciata",d:"20 sec"},
+{n:"Flessione lombare",d:"2 serie"}
 
 ]
 
-let index=0
+index=0
+show()
 
-function showExercise(){
+}
 
-document.getElementById("exercise").innerText = exercises[index].name
+function startWorkoutA(){
 
-document.getElementById("details").innerText = exercises[index].details
+exercises=[
+
+{n:"Squat",d:"4 x 10"},
+{n:"Sumo Squat",d:"4 x 10"},
+{n:"Leg Extension",d:"3 x 10-12"},
+{n:"Leg Curl",d:"3 x 10-12"},
+{n:"Affondi",d:"3 x 10 per gamba"},
+{n:"Stacco Rumeno",d:"3 x 10-12"}
+
+]
+
+index=0
+show()
+
+}
+
+function startWorkoutB(){
+
+exercises=[
+
+{n:"Push up",d:"4 x 10"},
+{n:"Lat machine",d:"4 x 10"},
+{n:"Pull down",d:"4 x 10-12"},
+{n:"Shoulder press",d:"3 x 10-12"},
+{n:"Alzate laterali",d:"3 x 10"},
+{n:"Rematore manubrio",d:"3 x 10"}
+
+]
+
+index=0
+show()
+
+}
+
+function startCore(){
+
+exercises=[
+
+{n:"Dead bug",d:"30 sec"},
+{n:"Mountain climber",d:"30 sec"},
+{n:"Plank laterale SX",d:"30 sec"},
+{n:"Plank laterale DX",d:"30 sec"}
+
+]
+
+index=0
+show()
+
+}
+
+function show(){
+
+document.getElementById("exercise").innerText=exercises[index].n
+document.getElementById("details").innerText=exercises[index].d
 
 }
 
@@ -110,11 +155,11 @@ function nextExercise(){
 
 index++
 
-if(index >= exercises.length){
-index = 0
+if(index>=exercises.length){
+index=0
 }
 
-showExercise()
+show()
 
 }
 
@@ -124,21 +169,21 @@ function startTimer(seconds){
 
 clearInterval(countdown)
 
-let time = seconds
+let time=seconds
 
-document.getElementById("timer").innerText = time
+document.getElementById("timer").innerText=time
 
-countdown = setInterval(function(){
+countdown=setInterval(function(){
 
 time--
 
-document.getElementById("timer").innerText = time
+document.getElementById("timer").innerText=time
 
-if(time <= 0){
+if(time<=0){
 
 clearInterval(countdown)
 
-document.getElementById("timer").innerText = "FINE"
+document.getElementById("timer").innerText="FINE"
 
 }
 
@@ -146,10 +191,7 @@ document.getElementById("timer").innerText = "FINE"
 
 }
 
-showExercise()
-
 </script>
 
 </body>
-
 </html>
