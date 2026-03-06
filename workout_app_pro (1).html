@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workout Pro - Scheda Palestra</title>
+<style>
+body{font-family:Arial;margin:0;background:#f2f2f2;}
+header{background:#111;color:white;padding:16px;text-align:center;font-size:20px;}
+.container{padding:15px;}
+.tabs{text-align:center;margin-bottom:12px;}
+.tab{display:inline-block;padding:10px 14px;margin:3px;border-radius:8px;background:#ddd;cursor:pointer}
+.active{background:#2d89ef;color:white;}
+.card{background:white;border-radius:10px;padding:18px;margin-bottom:15px;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+.exercise{font-size:22px;font-weight:bold}
+.details{margin-top:6px}
+button{padding:10px 14px;border:none;border-radius:8px;margin:5px;font-size:15px;cursor:pointer}
+.primary{background:#2d89ef;color:white}
+.secondary{background:#444;color:white}
+.timer{font-size:28px;font-weight:bold;text-align:center;margin-top:10px}
+input{padding:8px;width:100px}
+.progress{text-align:center;margin-bottom:10px}
+.stats{font-size:14px;margin-top:10px;background:#fafafa;padding:10px;border-radius:6px}
+.video a{color:#2d89ef;text-decoration:none}
+.warning{background:#fff3cd;padding:8px;border-radius:6px;margin-top:8px;font-size:14px}
+</style>
+</head>
+
+<body>
+
+<header>🏋️ Workout Pro</header>
+
+<div class="container">
+
+<div class="tabs">
+<span class="tab active" onclick="switchWorkout('A')" id="tabA">Allenamento A (Gambe)</span>
+<span class="tab" onclick="switchWorkout('B')" id="tabB">Allenamento B (Parte Alta)</span>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<div class="card">
+
+<div class="exercise" id="exerciseName"></div>
+<div class="details" id="exerciseDetails"></div>
+
+<div class="warning" id="warning" style="display:none;">
+⚠ Mantieni addome attivo e schiena neutra.
+</div>
+
+<div class="details">
+Peso: <input type="number" id="weightInput" placeholder="kg">
+<button class="secondary" onclick="saveWeight()">Salva</button>
+</div>
+
+<div class="details">
+Serie completate: <span id="setsDone">0</span>
+</div>
+
+<div>
+<button class="primary" onclick="completeSet()">✅ Serie completata</button>
+</div>
+
+<div>
+<button class="secondary" onclick="prevExercise()">◀ Precedente</button>
+<button class="secondary" onclick="nextExercise()">Prossimo ▶</button>
+</div>
+
+<div class="timer" id="timer">--</div>
+
+<div class="video" id="video"></div>
+
+<div class="stats" id="stats"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const workoutA=[
+{name:"Squat",details:"4 x 10",rest:90,video:"https://www.youtube.com/results?search_query=barbell+squat+exercise"},
+{name:"Sumo Squat",details:"4 x 10",rest:90,video:"https://www.youtube.com/results?search_query=sumo+squat+exercise"},
+{name:"Leg Extension",details:"3 x 10-12",rest:60,video:"https://www.youtube.com/results?search_query=leg+extension+machine"},
+{name:"Leg Curl",details:"3 x 10-12",rest:60,video:"https://www.youtube.com/results?search_query=leg+curl+machine"},
+{name:"Affondi",details:"3 x 10 per gamba",rest:90,video:"https://www.youtube.com/results?search_query=walking+lunges+dumbbell"},
+{name:"Stacco Rumeno",details:"3 x 10-12",rest:90,video:"https://www.youtube.com/results?search_query=romanian+deadlift+exercise"}
+]
+
+const workoutB=[
+{name:"Push Up",details:"4 x 10",rest:60,video:"https://www.youtube.com/results?search_query=push+up+exercise"},
+{name:"Lat Machine",details:"4 x 10",rest:90,video:"https://www.youtube.com/results?search_query=lat+pulldown+exercise"},
+{name:"Pull Down",details:"4 x 10-12",rest:90,video:"https://www.youtube.com/results?search_query=lat+pulldown+close+grip"},
+{name:"Shoulder Press",details:"3 x 10-12",rest:90,video:"https://www.youtube.com/results?search_query=dumbbell+shoulder+press"},
+{name:"Alzate Laterali",details:"3-4 x 10",rest:60,video:"https://www.youtube.com/results?search_query=lateral+raise+dumbbell"},
+{name:"Rematore Manubrio",details:"3 x 10 lato",rest:90,video:"https://www.youtube.com/results?search_query=one+arm+dumbbell+row"}
+]
+
+let workout="A"
+let index=0
+let sets=0
+let totalVolume=0
+let countdown
+
+function getWorkout(){
+return workout==="A"?workoutA:workoutB
+}
+
+function showExercise(){
+
+let w=getWorkout()[index]
+
+document.getElementById("exerciseName").innerText=w.name
+document.getElementById("exerciseDetails").innerText=w.details
+document.getElementById("progress").innerText="Esercizio "+(index+1)+" / "+getWorkout().length
+
+sets=Number(localStorage.getItem("sets_"+workout+"_"+index))||0
+document.getElementById("setsDone").innerText=sets
+
+let warnExercises=["Squat","Stacco Rumeno","Affondi"]
+document.getElementById("warning").style.display=warnExercises.includes(w.name)?"block":"none"
+
+document.getElementById("video").innerHTML='<br>🎥 Tecnica: <a target="_blank" href="'+w.video+'">Guarda video esercizio</a>'
+
+loadWeight()
+updateStats()
+}
+
+function completeSet(){
+
+sets++
+localStorage.setItem("sets_"+workout+"_"+index,sets)
+document.getElementById("setsDone").innerText=sets
+
+let weight=Number(document.getElementById("weightInput").value)||0
+totalVolume+=weight
+
+startTimer(getWorkout()[index].rest)
+
+updateStats()
+}
+
+function nextExercise(){
+index++
+if(index>=getWorkout().length){
+alert("Allenamento completato 💪")
+index=0
+}
+showExercise()
+}
+
+function prevExercise(){
+index--
+if(index<0)index=0
+showExercise()
+}
+
+function startTimer(seconds){
+
+clearInterval(countdown)
+let t=seconds
+document.getElementById("timer").innerText=t
+
+countdown=setInterval(function(){
+
+t--
+document.getElementById("timer").innerText=t
+
+if(t<=0){
+clearInterval(countdown)
+document.getElementById("timer").innerText="FINE"
+}
+
+},1000)
+}
+
+function saveWeight(){
+
+let w=document.getElementById("weightInput").value
+localStorage.setItem("weight_"+workout+"_"+index,w)
+
+}
+
+function loadWeight(){
+
+let w=localStorage.getItem("weight_"+workout+"_"+index)
+document.getElementById("weightInput").value=w?w:""
+
+}
+
+function switchWorkout(type){
+
+workout=type
+index=0
+
+document.getElementById("tabA").classList.remove("active")
+document.getElementById("tabB").classList.remove("active")
+document.getElementById("tab"+type).classList.add("active")
+
+showExercise()
+
+}
+
+function updateStats(){
+
+let text="📊 Volume totale stimato: "+totalVolume+" kg"
+document.getElementById("stats").innerHTML=text
+
+}
+
+showExercise()
+
+</script>
+
+</body>
+</html>
