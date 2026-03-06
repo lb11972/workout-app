@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <title>Workout App</title>
 
@@ -8,29 +9,67 @@
 
 body{
 font-family:Arial;
-background:#f2f2f2;
+background:#121212;
+color:white;
 text-align:center;
+margin:0;
+}
+
+.header{
+background:#1f1f1f;
+padding:15px;
+font-size:22px;
+font-weight:bold;
 }
 
 .container{
-max-width:500px;
-margin:auto;
-background:white;
 padding:20px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+.card{
+background:#1e1e1e;
+border-radius:12px;
+padding:20px;
+margin:15px auto;
+max-width:400px;
+box-shadow:0 4px 10px rgba(0,0,0,0.4);
 }
 
 button{
+background:#00c853;
+border:none;
+color:white;
 padding:12px;
-margin:10px;
+margin:8px;
+border-radius:8px;
 font-size:16px;
 width:80%;
 }
 
-.timer{
-font-size:30px;
+button.secondary{
+background:#2962ff;
+}
+
+.exercise{
+font-size:22px;
 margin-top:10px;
+}
+
+.timer{
+font-size:28px;
+margin-top:10px;
+}
+
+input{
+padding:10px;
+border-radius:6px;
+border:none;
+width:80px;
+text-align:center;
+}
+
+.menu button{
+width:90%;
 }
 
 </style>
@@ -39,33 +78,62 @@ margin-top:10px;
 
 <body>
 
+<div class="header">
+Workout App
+</div>
+
 <div class="container">
 
-<h1>Workout App</h1>
-
-<div id="menu">
+<div class="card menu">
 
 <button onclick="startWarmup()">🔥 Riscaldamento</button>
-
-<button onclick="startWorkoutA()">🦵 Allenamento A</button>
-
-<button onclick="startWorkoutB()">💪 Allenamento B</button>
-
+<button onclick="startWorkoutA()">🦵 Gambe</button>
+<button onclick="startWorkoutB()">💪 Parte Alta</button>
 <button onclick="startCore()">🧠 Core</button>
 
 </div>
 
-<h2 id="exercise"></h2>
-<p id="details"></p>
+<div class="card">
 
-<button onclick="nextExercise()">Prossimo esercizio</button>
+<div class="exercise" id="exercise"></div>
+<div id="details"></div>
 
 <br>
 
-<button onclick="startTimer(60)">Recupero 60s</button>
-<button onclick="startTimer(90)">Recupero 90s</button>
+Peso:
+<input id="weight" type="number">
+
+<button onclick="saveWeight()">💾 Salva peso</button>
+
+<br>
+
+<button onclick="nextExercise()" class="secondary">
+▶ Prossimo esercizio
+</button>
+
+</div>
+
+<div class="card">
+
+⏱ Cronometro allenamento
+
+<div class="timer" id="workoutTimer">0</div>
+
+<button onclick="startWorkoutTimer()">Start</button>
+<button onclick="stopWorkoutTimer()">Stop</button>
+
+</div>
+
+<div class="card">
+
+Timer recupero
 
 <div class="timer" id="timer"></div>
+
+<button onclick="startTimer(60)">60s</button>
+<button onclick="startTimer(90)">90s</button>
+
+</div>
 
 </div>
 
@@ -77,14 +145,12 @@ let index=0
 function startWarmup(){
 
 exercises=[
-
-{n:"Mobilità",d:"Gatto – Sfinge / Devoto / Rotazioni schiena"},
-{n:"Tapis roulant",d:"10 minuti"},
+{n:"Mobilità",d:"Gatto – Sfinge"},
+{n:"Tapis roulant",d:"10 min"},
 {n:"Skip basso",d:"20 sec"},
 {n:"Skip alto",d:"20 sec"},
 {n:"Calciata",d:"20 sec"},
 {n:"Flessione lombare",d:"2 serie"}
-
 ]
 
 index=0
@@ -95,14 +161,12 @@ show()
 function startWorkoutA(){
 
 exercises=[
-
-{n:"Squat",d:"4 x 10"},
+{n:"Squat 🏋️",d:"4 x 10"},
 {n:"Sumo Squat",d:"4 x 10"},
-{n:"Leg Extension",d:"3 x 10-12"},
-{n:"Leg Curl",d:"3 x 10-12"},
-{n:"Affondi",d:"3 x 10 per gamba"},
-{n:"Stacco Rumeno",d:"3 x 10-12"}
-
+{n:"Leg Extension",d:"3 x 12"},
+{n:"Leg Curl",d:"3 x 12"},
+{n:"Affondi",d:"3 x 10"},
+{n:"Stacco Rumeno",d:"3 x 10"}
 ]
 
 index=0
@@ -113,14 +177,12 @@ show()
 function startWorkoutB(){
 
 exercises=[
-
-{n:"Push up",d:"4 x 10"},
-{n:"Lat machine",d:"4 x 10"},
-{n:"Pull down",d:"4 x 10-12"},
-{n:"Shoulder press",d:"3 x 10-12"},
-{n:"Alzate laterali",d:"3 x 10"},
-{n:"Rematore manubrio",d:"3 x 10"}
-
+{n:"Push Up",d:"4 x 10"},
+{n:"Lat Machine",d:"4 x 10"},
+{n:"Pull Down",d:"4 x 10"},
+{n:"Shoulder Press",d:"3 x 12"},
+{n:"Alzate Laterali",d:"3 x 10"},
+{n:"Rematore",d:"3 x 10"}
 ]
 
 index=0
@@ -131,12 +193,10 @@ show()
 function startCore(){
 
 exercises=[
-
-{n:"Dead bug",d:"30 sec"},
-{n:"Mountain climber",d:"30 sec"},
-{n:"Plank laterale SX",d:"30 sec"},
-{n:"Plank laterale DX",d:"30 sec"}
-
+{n:"Dead Bug",d:"30 sec"},
+{n:"Mountain Climber",d:"30 sec"},
+{n:"Plank SX",d:"30 sec"},
+{n:"Plank DX",d:"30 sec"}
 ]
 
 index=0
@@ -149,6 +209,8 @@ function show(){
 document.getElementById("exercise").innerText=exercises[index].n
 document.getElementById("details").innerText=exercises[index].d
 
+loadWeight()
+
 }
 
 function nextExercise(){
@@ -160,6 +222,26 @@ index=0
 }
 
 show()
+
+}
+
+function saveWeight(){
+
+let w=document.getElementById("weight").value
+
+localStorage.setItem(exercises[index].n,w)
+
+}
+
+function loadWeight(){
+
+let w=localStorage.getItem(exercises[index].n)
+
+if(w){
+document.getElementById("weight").value=w
+}else{
+document.getElementById("weight").value=""
+}
 
 }
 
@@ -180,14 +262,332 @@ time--
 document.getElementById("timer").innerText=time
 
 if(time<=0){
-
 clearInterval(countdown)
-
 document.getElementById("timer").innerText="FINE"
-
 }
 
 },1000)
+
+}
+
+let workoutTime=0
+let workoutInterval
+
+function startWorkoutTimer(){
+
+clearInterval(workoutInterval)
+
+workoutInterval=setInterval(function(){
+
+workoutTime++
+
+document.getElementById("workoutTimer").innerText=workoutTime+" s"
+
+},1000)
+
+}
+
+function stopWorkoutTimer(){
+
+clearInterval(workoutInterval)
+
+}
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Workout App</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#121212;
+color:white;
+text-align:center;
+margin:0;
+}
+
+.header{
+background:#1f1f1f;
+padding:15px;
+font-size:22px;
+font-weight:bold;
+}
+
+.container{
+padding:20px;
+}
+
+.card{
+background:#1e1e1e;
+border-radius:12px;
+padding:20px;
+margin:15px auto;
+max-width:400px;
+box-shadow:0 4px 10px rgba(0,0,0,0.4);
+}
+
+button{
+background:#00c853;
+border:none;
+color:white;
+padding:12px;
+margin:8px;
+border-radius:8px;
+font-size:16px;
+width:80%;
+}
+
+button.secondary{
+background:#2962ff;
+}
+
+.exercise{
+font-size:22px;
+margin-top:10px;
+}
+
+.timer{
+font-size:28px;
+margin-top:10px;
+}
+
+input{
+padding:10px;
+border-radius:6px;
+border:none;
+width:80px;
+text-align:center;
+}
+
+.menu button{
+width:90%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+Workout App
+</div>
+
+<div class="container">
+
+<div class="card menu">
+
+<button onclick="startWarmup()">🔥 Riscaldamento</button>
+<button onclick="startWorkoutA()">🦵 Gambe</button>
+<button onclick="startWorkoutB()">💪 Parte Alta</button>
+<button onclick="startCore()">🧠 Core</button>
+
+</div>
+
+<div class="card">
+
+<div class="exercise" id="exercise"></div>
+<div id="details"></div>
+
+<br>
+
+Peso:
+<input id="weight" type="number">
+
+<button onclick="saveWeight()">💾 Salva peso</button>
+
+<br>
+
+<button onclick="nextExercise()" class="secondary">
+▶ Prossimo esercizio
+</button>
+
+</div>
+
+<div class="card">
+
+⏱ Cronometro allenamento
+
+<div class="timer" id="workoutTimer">0</div>
+
+<button onclick="startWorkoutTimer()">Start</button>
+<button onclick="stopWorkoutTimer()">Stop</button>
+
+</div>
+
+<div class="card">
+
+Timer recupero
+
+<div class="timer" id="timer"></div>
+
+<button onclick="startTimer(60)">60s</button>
+<button onclick="startTimer(90)">90s</button>
+
+</div>
+
+</div>
+
+<script>
+
+let exercises=[]
+let index=0
+
+function startWarmup(){
+
+exercises=[
+{n:"Mobilità",d:"Gatto – Sfinge"},
+{n:"Tapis roulant",d:"10 min"},
+{n:"Skip basso",d:"20 sec"},
+{n:"Skip alto",d:"20 sec"},
+{n:"Calciata",d:"20 sec"},
+{n:"Flessione lombare",d:"2 serie"}
+]
+
+index=0
+show()
+
+}
+
+function startWorkoutA(){
+
+exercises=[
+{n:"Squat 🏋️",d:"4 x 10"},
+{n:"Sumo Squat",d:"4 x 10"},
+{n:"Leg Extension",d:"3 x 12"},
+{n:"Leg Curl",d:"3 x 12"},
+{n:"Affondi",d:"3 x 10"},
+{n:"Stacco Rumeno",d:"3 x 10"}
+]
+
+index=0
+show()
+
+}
+
+function startWorkoutB(){
+
+exercises=[
+{n:"Push Up",d:"4 x 10"},
+{n:"Lat Machine",d:"4 x 10"},
+{n:"Pull Down",d:"4 x 10"},
+{n:"Shoulder Press",d:"3 x 12"},
+{n:"Alzate Laterali",d:"3 x 10"},
+{n:"Rematore",d:"3 x 10"}
+]
+
+index=0
+show()
+
+}
+
+function startCore(){
+
+exercises=[
+{n:"Dead Bug",d:"30 sec"},
+{n:"Mountain Climber",d:"30 sec"},
+{n:"Plank SX",d:"30 sec"},
+{n:"Plank DX",d:"30 sec"}
+]
+
+index=0
+show()
+
+}
+
+function show(){
+
+document.getElementById("exercise").innerText=exercises[index].n
+document.getElementById("details").innerText=exercises[index].d
+
+loadWeight()
+
+}
+
+function nextExercise(){
+
+index++
+
+if(index>=exercises.length){
+index=0
+}
+
+show()
+
+}
+
+function saveWeight(){
+
+let w=document.getElementById("weight").value
+
+localStorage.setItem(exercises[index].n,w)
+
+}
+
+function loadWeight(){
+
+let w=localStorage.getItem(exercises[index].n)
+
+if(w){
+document.getElementById("weight").value=w
+}else{
+document.getElementById("weight").value=""
+}
+
+}
+
+let countdown
+
+function startTimer(seconds){
+
+clearInterval(countdown)
+
+let time=seconds
+
+document.getElementById("timer").innerText=time
+
+countdown=setInterval(function(){
+
+time--
+
+document.getElementById("timer").innerText=time
+
+if(time<=0){
+clearInterval(countdown)
+document.getElementById("timer").innerText="FINE"
+}
+
+},1000)
+
+}
+
+let workoutTime=0
+let workoutInterval
+
+function startWorkoutTimer(){
+
+clearInterval(workoutInterval)
+
+workoutInterval=setInterval(function(){
+
+workoutTime++
+
+document.getElementById("workoutTimer").innerText=workoutTime+" s"
+
+},1000)
+
+}
+
+function stopWorkoutTimer(){
+
+clearInterval(workoutInterval)
 
 }
 
