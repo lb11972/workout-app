@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <title>Workout App</title>
 
 <style>
@@ -53,31 +52,17 @@ background:#2962ff;
 }
 
 .exercise{
-font-size:22px;
+font-size:24px;
 margin-top:10px;
 }
 
 .timer{
-font-size:28px;
+font-size:30px;
 margin-top:10px;
-}
-
-input{
-padding:10px;
-border-radius:6px;
-border:none;
-width:90px;
-text-align:center;
 }
 
 .warning{
 color:#ff5252;
-font-size:14px;
-margin-top:8px;
-}
-
-.history{
-font-size:14px;
 margin-top:10px;
 }
 
@@ -95,9 +80,14 @@ Workout App
 
 <div class="card">
 
-<button onclick="startWarmup()">🔥 Riscaldamento</button>
+<button onclick="startGuided()">▶ Allenamento di oggi</button>
+
+<button onclick="startWarmup()">🔥 Solo riscaldamento</button>
+
 <button onclick="startWorkoutA()">🦵 Gambe</button>
+
 <button onclick="startWorkoutB()">💪 Parte alta</button>
+
 <button onclick="startCore()">🧠 Core</button>
 
 </div>
@@ -110,50 +100,21 @@ Workout App
 
 <div class="warning" id="warning"></div>
 
-<div id="video"></div>
-
 <br>
 
-Peso:
-
-<input id="weight" type="number">
-
-<button onclick="saveWeight()">💾 Salva peso</button>
-
-<br>
-
-Serie completate: <span id="sets">0</span>
-
-<br>
-
-<button onclick="addSet()" class="secondary">
+<button onclick="completeSet()" class="secondary">
 ✔ Serie completata
 </button>
-
-<br>
 
 <button onclick="nextExercise()" class="secondary">
 ▶ Prossimo esercizio
 </button>
 
-<div class="history" id="history"></div>
-
 </div>
 
 <div class="card">
 
-⏱ Cronometro allenamento
-
-<div class="timer" id="workoutTimer">0</div>
-
-<button onclick="startWorkoutTimer()">Start</button>
-<button onclick="stopWorkoutTimer()">Stop</button>
-
-</div>
-
-<div class="card">
-
-Timer recupero
+⏱ Timer recupero
 
 <div class="timer" id="timer"></div>
 
@@ -170,21 +131,34 @@ let exercises=[]
 let index=0
 let sets=0
 
+function startGuided(){
+
+let last=localStorage.getItem("lastWorkout")
+
+if(last=="A"){
+startWorkoutB()
+localStorage.setItem("lastWorkout","B")
+}else{
+startWorkoutA()
+localStorage.setItem("lastWorkout","A")
+}
+
+}
+
 function startWarmup(){
 
 exercises=[
 
-{n:"Mobilità",d:"Gatto – Sfinge / Devoto",v:""},
-{n:"Tapis roulant",d:"10 min",v:""},
-{n:"Skip basso",d:"20 sec",v:""},
-{n:"Skip alto",d:"20 sec",v:""},
-{n:"Calciata",d:"20 sec",v:""},
-{n:"Flessione lombare",d:"2 serie",v:""}
+{n:"Mobilità",d:"Gatto – Sfinge / Devoto"},
+{n:"Tapis roulant",d:"10 min"},
+{n:"Skip basso",d:"20 sec"},
+{n:"Skip alto",d:"20 sec"},
+{n:"Calciata",d:"20 sec"},
+{n:"Flessione lombare",d:"2 serie"}
 
 ]
 
 index=0
-sets=0
 show()
 
 }
@@ -193,17 +167,16 @@ function startWorkoutA(){
 
 exercises=[
 
-{n:"Squat",d:"4 x 10",v:"https://www.youtube.com/results?search_query=squat+exercise"},
-{n:"Sumo Squat",d:"4 x 10",v:"https://www.youtube.com/results?search_query=sumo+squat"},
-{n:"Leg Extension",d:"3 x 12",v:"https://www.youtube.com/results?search_query=leg+extension"},
-{n:"Leg Curl",d:"3 x 12",v:"https://www.youtube.com/results?search_query=leg+curl"},
-{n:"Affondi",d:"3 x 10",v:"https://www.youtube.com/results?search_query=walking+lunges"},
-{n:"Stacco Rumeno",d:"3 x 10",v:"https://www.youtube.com/results?search_query=romanian+deadlift"}
+{n:"Squat",d:"4 x 10"},
+{n:"Sumo Squat",d:"4 x 10"},
+{n:"Leg Extension",d:"3 x 12"},
+{n:"Leg Curl",d:"3 x 12"},
+{n:"Affondi",d:"3 x 10"},
+{n:"Stacco Rumeno",d:"3 x 10"}
 
 ]
 
 index=0
-sets=0
 show()
 
 }
@@ -212,17 +185,16 @@ function startWorkoutB(){
 
 exercises=[
 
-{n:"Push Up",d:"4 x 10",v:"https://www.youtube.com/results?search_query=push+up"},
-{n:"Lat Machine",d:"4 x 10",v:"https://www.youtube.com/results?search_query=lat+pulldown"},
-{n:"Pull Down",d:"4 x 10",v:"https://www.youtube.com/results?search_query=lat+pulldown+close+grip"},
-{n:"Shoulder Press",d:"3 x 12",v:"https://www.youtube.com/results?search_query=dumbbell+shoulder+press"},
-{n:"Alzate Laterali",d:"3 x 10",v:"https://www.youtube.com/results?search_query=lateral+raise"},
-{n:"Rematore",d:"3 x 10",v:"https://www.youtube.com/results?search_query=dumbbell+row"}
+{n:"Push Up",d:"4 x 10"},
+{n:"Lat Machine",d:"4 x 10"},
+{n:"Pull Down",d:"4 x 10"},
+{n:"Shoulder Press",d:"3 x 12"},
+{n:"Alzate Laterali",d:"3 x 10"},
+{n:"Rematore",d:"3 x 10"}
 
 ]
 
 index=0
-sets=0
 show()
 
 }
@@ -231,15 +203,14 @@ function startCore(){
 
 exercises=[
 
-{n:"Dead Bug",d:"30 sec",v:"https://www.youtube.com/results?search_query=dead+bug+exercise"},
-{n:"Mountain Climber",d:"30 sec",v:"https://www.youtube.com/results?search_query=mountain+climber+exercise"},
-{n:"Plank SX",d:"30 sec",v:"https://www.youtube.com/results?search_query=side+plank"},
-{n:"Plank DX",d:"30 sec",v:"https://www.youtube.com/results?search_query=side+plank"}
+{n:"Dead Bug",d:"30 sec"},
+{n:"Mountain Climber",d:"30 sec"},
+{n:"Plank SX",d:"30 sec"},
+{n:"Plank DX",d:"30 sec"}
 
 ]
 
 index=0
-sets=0
 show()
 
 }
@@ -251,14 +222,6 @@ let ex=exercises[index]
 document.getElementById("exercise").innerText=ex.n
 document.getElementById("details").innerText=ex.d
 
-document.getElementById("sets").innerText=sets
-
-if(ex.v){
-document.getElementById("video").innerHTML='<a href="'+ex.v+'" target="_blank">🎥 Video esercizio</a>'
-}else{
-document.getElementById("video").innerHTML=""
-}
-
 let risk=["Squat","Stacco Rumeno","Affondi"]
 
 if(risk.includes(ex.n)){
@@ -267,15 +230,11 @@ document.getElementById("warning").innerText="⚠ Mantieni schiena neutra e addo
 document.getElementById("warning").innerText=""
 }
 
-loadWeight()
-
 }
 
 function nextExercise(){
 
 index++
-
-sets=0
 
 if(index>=exercises.length){
 index=0
@@ -285,53 +244,9 @@ show()
 
 }
 
-function addSet(){
+function completeSet(){
 
-sets++
-
-document.getElementById("sets").innerText=sets
-
-}
-
-function saveWeight(){
-
-let w=document.getElementById("weight").value
-
-localStorage.setItem(exercises[index].n,w)
-
-updateHistory()
-
-}
-
-function loadWeight(){
-
-let w=localStorage.getItem(exercises[index].n)
-
-if(w){
-document.getElementById("weight").value=w
-}else{
-document.getElementById("weight").value=""
-}
-
-updateHistory()
-
-}
-
-function updateHistory(){
-
-let history=""
-
-for(let i=0;i<localStorage.length;i++){
-
-let k=localStorage.key(i)
-
-let v=localStorage.getItem(k)
-
-history+=k+": "+v+" kg<br>"
-
-}
-
-document.getElementById("history").innerHTML=history
+startTimer(90)
 
 }
 
@@ -352,39 +267,18 @@ time--
 document.getElementById("timer").innerText=time
 
 if(time<=0){
+
 clearInterval(countdown)
+
 document.getElementById("timer").innerText="FINE"
+
 }
 
 },1000)
-
-}
-
-let workoutTime=0
-let workoutInterval
-
-function startWorkoutTimer(){
-
-clearInterval(workoutInterval)
-
-workoutInterval=setInterval(function(){
-
-workoutTime++
-
-document.getElementById("workoutTimer").innerText=workoutTime+" s"
-
-},1000)
-
-}
-
-function stopWorkoutTimer(){
-
-clearInterval(workoutInterval)
 
 }
 
 </script>
 
 </body>
-
 </html>
