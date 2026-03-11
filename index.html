@@ -47,10 +47,6 @@ background:#22c55e;
 color:white;
 }
 
-.secondary{
-background:#3b82f6;
-}
-
 .exercise{
 font-size:26px;
 margin-top:10px;
@@ -64,6 +60,23 @@ font-size:18px;
 .timer{
 font-size:40px;
 margin-top:10px;
+}
+
+#progressContainer{
+margin-bottom:10px;
+}
+
+#progressBackground{
+background:#334155;
+height:10px;
+border-radius:10px;
+}
+
+#progressBar{
+background:#22c55e;
+height:10px;
+width:0%;
+border-radius:10px;
 }
 
 </style>
@@ -85,6 +98,16 @@ margin-top:10px;
 </div>
 
 <div class="card">
+
+<div id="progressContainer">
+
+<div id="progressBackground">
+<div id="progressBar"></div>
+</div>
+
+<div id="progressText"></div>
+
+</div>
 
 <div class="exercise" id="exercise">
 Seleziona allenamento
@@ -180,6 +203,8 @@ let ex=exercises[index]
 document.getElementById("exercise").innerText=ex.name
 document.getElementById("series").innerText="Serie "+currentSet+" / "+ex.sets
 
+updateProgress()
+
 if(ex.time){
 
 startTimer(ex.time)
@@ -227,7 +252,6 @@ timer.innerText=sec
 let interval=setInterval(function(){
 
 sec--
-
 timer.innerText=sec
 
 if(sec<=0){
@@ -237,6 +261,16 @@ clearInterval(interval)
 }
 
 },1000)
+
+}
+
+function updateProgress(){
+
+let percent=(index/exercises.length)*100
+
+document.getElementById("progressBar").style.width=percent+"%"
+
+document.getElementById("progressText").innerText=index+" / "+exercises.length+" esercizi"
 
 }
 
