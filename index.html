@@ -72,6 +72,16 @@ margin-top:10px;
 font-size:36px;
 }
 
+input{
+padding:10px;
+font-size:16px;
+border-radius:8px;
+border:none;
+margin-top:10px;
+width:120px;
+text-align:center;
+}
+
 #progressBar{
 width:100%;
 height:12px;
@@ -87,13 +97,7 @@ border-radius:10px;
 width:0%;
 }
 
-#progressText{
-margin-top:6px;
-font-size:14px;
-}
-
 #recoveryScreen{
-
 position:fixed;
 top:0;
 left:0;
@@ -105,7 +109,6 @@ align-items:center;
 justify-content:center;
 flex-direction:column;
 z-index:999;
-
 }
 
 #recoveryTimer{
@@ -113,13 +116,7 @@ font-size:120px;
 font-weight:bold;
 }
 
-#recoveryText{
-font-size:30px;
-margin-bottom:20px;
-}
-
 #finishScreen{
-
 position:fixed;
 top:0;
 left:0;
@@ -130,18 +127,10 @@ display:none;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-z-index:999;
-
-}
-
-#finishTitle{
-font-size:36px;
-margin-bottom:20px;
 }
 
 #finishTime{
 font-size:48px;
-margin-top:10px;
 }
 
 </style>
@@ -151,14 +140,20 @@ margin-top:10px;
 <body>
 
 <div id="recoveryScreen">
-<div id="recoveryText">RECUPERO</div>
+
+<div>RECUPERO</div>
 <div id="recoveryTimer">60</div>
+
 </div>
 
 <div id="finishScreen">
-<div id="finishTitle">Allenamento completato 💪</div>
+
+<h1>Allenamento completato 💪</h1>
+
 <div>Durata allenamento</div>
+
 <div id="finishTime">00:00</div>
+
 </div>
 
 <div class="header">
@@ -170,9 +165,13 @@ margin-top:10px;
 <div class="card">
 
 <button onclick="startGuided()">▶ Allenamento di oggi</button>
+
 <button onclick="startWarmup()">🔥 Riscaldamento</button>
+
 <button onclick="startWorkoutA()">🦵 Gambe</button>
+
 <button onclick="startWorkoutB()">💪 Parte alta</button>
+
 <button onclick="startCore()">🧠 Core</button>
 
 </div>
@@ -183,8 +182,6 @@ margin-top:10px;
 <div id="progress"></div>
 </div>
 
-<div id="progressText"></div>
-
 <div class="icon" id="icon"></div>
 
 <div class="exercise" id="exercise"></div>
@@ -192,6 +189,16 @@ margin-top:10px;
 <div class="details" id="details"></div>
 
 <div class="series" id="series"></div>
+
+<div id="weightSection">
+
+<p>Peso utilizzato</p>
+
+<input id="weightInput" type="number">
+
+<button onclick="saveWeight()">Salva peso</button>
+
+</div>
 
 <br>
 
@@ -209,9 +216,12 @@ let exercises=[]
 let index=0
 let currentSet=0
 let startTime=0
+let workoutMode=false
 
 function startTimerWorkout(){
+
 startTime=Date.now()
+
 }
 
 function getWorkoutDuration(){
@@ -233,29 +243,17 @@ let percent=((index)/exercises.length)*100
 
 document.getElementById("progress").style.width=percent+"%"
 
-document.getElementById("progressText").innerText=(index+1)+" / "+exercises.length+" esercizi"
-
 }
 
 function startGuided(){
 
-startTimerWorkout()
-
-let last=localStorage.getItem("lastWorkout")
-
-if(last=="A"){
 startWorkoutB()
-localStorage.setItem("lastWorkout","B")
-}else{
-startWorkoutA()
-localStorage.setItem("lastWorkout","A")
-}
 
 }
 
 function startWarmup(){
 
-startTimerWorkout()
+workoutMode=false
 
 exercises=[
 
@@ -263,55 +261,66 @@ exercises=[
 {i:"⚡",n:"Skip basso",d:"20 sec",sets:2},
 {i:"⚡",n:"Skip alto",d:"20 sec",sets:2},
 {i:"⚡",n:"Calciata",d:"20 sec",sets:2},
-{i:"🦴",n:"Flessione lombare",d:"10 ripetizioni",sets:2},
+{i:"🦴",n:"Flessione lombare",d:"10 rip",sets:2},
 {i:"🏃",n:"Tapis roulant",d:"10 min",sets:1}
 
 ]
 
 index=0
 currentSet=0
+
+document.getElementById("weightSection").style.display="none"
+
 show()
 
 }
 
 function startWorkoutA(){
 
+workoutMode=true
 startTimerWorkout()
 
 exercises=[
 
-{i:"🏋️",n:"Squat",d:"10 ripetizioni",sets:4},
-{i:"🏋️",n:"Sumo Squat",d:"10 ripetizioni",sets:4},
-{i:"🚶",n:"Affondi",d:"10 ripetizioni",sets:3},
-{i:"🏋️",n:"Stacco Rumeno",d:"10 ripetizioni",sets:3}
+{i:"🏋️",n:"Squat",d:"10 rip",sets:4},
+{i:"🏋️",n:"Sumo Squat",d:"10 rip",sets:4},
+{i:"🚶",n:"Affondi",d:"10 rip",sets:3},
+{i:"🏋️",n:"Stacco Rumeno",d:"10 rip",sets:3}
 
 ]
 
 index=0
 currentSet=0
+
+document.getElementById("weightSection").style.display="block"
+
 show()
 
 }
 
 function startWorkoutB(){
 
+workoutMode=true
 startTimerWorkout()
 
 exercises=[
 
-{i:"💪",n:"Push Up",d:"10 ripetizioni",sets:4},
-{i:"💪",n:"Lat Machine",d:"10 ripetizioni",sets:4},
-{i:"💪",n:"Pull Down",d:"10 ripetizioni",sets:4},
-{i:"🏋️",n:"Shoulder Press",d:"12 ripetizioni",sets:3},
-{i:"💪",n:"Alzate Laterali",d:"10 ripetizioni",sets:3},
-{i:"💪",n:"Rematore",d:"10 ripetizioni",sets:3},
-{i:"🦵",n:"Leg Extension",d:"12 ripetizioni",sets:3},
-{i:"🦵",n:"Leg Curl",d:"12 ripetizioni",sets:3}
+{i:"💪",n:"Push Up",d:"10 rip",sets:4},
+{i:"💪",n:"Lat Machine",d:"10 rip",sets:4},
+{i:"💪",n:"Pull Down",d:"10 rip",sets:4},
+{i:"🏋️",n:"Shoulder Press",d:"12 rip",sets:3},
+{i:"💪",n:"Alzate Laterali",d:"10 rip",sets:3},
+{i:"💪",n:"Rematore",d:"10 rip",sets:3},
+{i:"🦵",n:"Leg Extension",d:"12 rip",sets:3},
+{i:"🦵",n:"Leg Curl",d:"12 rip",sets:3}
 
 ]
 
 index=0
 currentSet=0
+
+document.getElementById("weightSection").style.display="block"
+
 show()
 
 }
@@ -324,9 +333,40 @@ document.getElementById("icon").innerText=ex.i
 document.getElementById("exercise").innerText=ex.n
 document.getElementById("details").innerText=ex.d
 
-document.getElementById("series").innerText="Serie: "+(currentSet+1)+" / "+ex.sets
+document.getElementById("series").innerText="Serie "+(currentSet+1)+" / "+ex.sets
 
 updateProgress()
+
+loadWeight()
+
+}
+
+function saveWeight(){
+
+let exercise=exercises[index].n
+let weight=document.getElementById("weightInput").value
+
+localStorage.setItem(exercise,weight)
+
+}
+
+function loadWeight(){
+
+if(!workoutMode) return
+
+let exercise=exercises[index].n
+
+let saved=localStorage.getItem(exercise)
+
+if(saved){
+
+document.getElementById("weightInput").value=saved
+
+}else{
+
+document.getElementById("weightInput").value=""
+
+}
 
 }
 
@@ -342,6 +382,7 @@ document.getElementById("finishScreen").style.display="flex"
 document.getElementById("finishTime").innerText=getWorkoutDuration()
 
 return
+
 }
 
 show()
@@ -380,6 +421,7 @@ timer.innerText=seconds
 let interval=setInterval(function(){
 
 seconds--
+
 timer.innerText=seconds
 
 if(seconds<=0){
