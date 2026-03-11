@@ -72,8 +72,23 @@ margin-top:10px;
 font-size:36px;
 }
 
-.warning{
-color:#f87171;
+#progressBar{
+width:100%;
+height:12px;
+background:#334155;
+border-radius:10px;
+margin-top:10px;
+}
+
+#progress{
+height:12px;
+background:#22c55e;
+border-radius:10px;
+width:0%;
+}
+
+#progressText{
+margin-top:6px;
 font-size:14px;
 }
 
@@ -94,17 +109,39 @@ z-index:999;
 }
 
 #recoveryTimer{
-
 font-size:120px;
 font-weight:bold;
-
 }
 
 #recoveryText{
-
 font-size:30px;
 margin-bottom:20px;
+}
 
+#finishScreen{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:999;
+
+}
+
+#finishTitle{
+font-size:36px;
+margin-bottom:20px;
+}
+
+#finishTime{
+font-size:48px;
+margin-top:10px;
 }
 
 </style>
@@ -114,11 +151,14 @@ margin-bottom:20px;
 <body>
 
 <div id="recoveryScreen">
-
 <div id="recoveryText">RECUPERO</div>
-
 <div id="recoveryTimer">60</div>
+</div>
 
+<div id="finishScreen">
+<div id="finishTitle">Allenamento completato 💪</div>
+<div>Durata allenamento</div>
+<div id="finishTime">00:00</div>
 </div>
 
 <div class="header">
@@ -130,18 +170,20 @@ margin-bottom:20px;
 <div class="card">
 
 <button onclick="startGuided()">▶ Allenamento di oggi</button>
-
 <button onclick="startWarmup()">🔥 Riscaldamento</button>
-
 <button onclick="startWorkoutA()">🦵 Gambe</button>
-
 <button onclick="startWorkoutB()">💪 Parte alta</button>
-
 <button onclick="startCore()">🧠 Core</button>
 
 </div>
 
 <div class="card">
+
+<div id="progressBar">
+<div id="progress"></div>
+</div>
+
+<div id="progressText"></div>
 
 <div class="icon" id="icon"></div>
 
@@ -150,8 +192,6 @@ margin-bottom:20px;
 <div class="details" id="details"></div>
 
 <div class="series" id="series"></div>
-
-<div class="warning" id="warning"></div>
 
 <br>
 
@@ -168,8 +208,38 @@ margin-bottom:20px;
 let exercises=[]
 let index=0
 let currentSet=0
+let startTime=0
+
+function startTimerWorkout(){
+startTime=Date.now()
+}
+
+function getWorkoutDuration(){
+
+let seconds=Math.floor((Date.now()-startTime)/1000)
+
+let min=Math.floor(seconds/60)
+let sec=seconds%60
+
+if(sec<10){sec="0"+sec}
+
+return min+":"+sec
+
+}
+
+function updateProgress(){
+
+let percent=((index)/exercises.length)*100
+
+document.getElementById("progress").style.width=percent+"%"
+
+document.getElementById("progressText").innerText=(index+1)+" / "+exercises.length+" esercizi"
+
+}
 
 function startGuided(){
+
+startTimerWorkout()
 
 let last=localStorage.getItem("lastWorkout")
 
@@ -184,6 +254,8 @@ localStorage.setItem("lastWorkout","A")
 }
 
 function startWarmup(){
+
+startTimerWorkout()
 
 exercises=[
 
@@ -204,6 +276,8 @@ show()
 
 function startWorkoutA(){
 
+startTimerWorkout()
+
 exercises=[
 
 {i:"🏋️",n:"Squat",d:"10 ripetizioni",sets:4},
@@ -220,6 +294,8 @@ show()
 }
 
 function startWorkoutB(){
+
+startTimerWorkout()
 
 exercises=[
 
@@ -240,23 +316,6 @@ show()
 
 }
 
-function startCore(){
-
-exercises=[
-
-{i:"🧠",n:"Dead Bug",d:"30 sec",sets:3},
-{i:"🔥",n:"Mountain Climber",d:"30 sec",sets:3},
-{i:"🧠",n:"Plank SX",d:"30 sec",sets:3},
-{i:"🧠",n:"Plank DX",d:"30 sec",sets:3}
-
-]
-
-index=0
-currentSet=0
-show()
-
-}
-
 function show(){
 
 let ex=exercises[index]
@@ -267,6 +326,8 @@ document.getElementById("details").innerText=ex.d
 
 document.getElementById("series").innerText="Serie: "+(currentSet+1)+" / "+ex.sets
 
+updateProgress()
+
 }
 
 function nextExercise(){
@@ -275,7 +336,12 @@ index++
 currentSet=0
 
 if(index>=exercises.length){
-index=0
+
+document.getElementById("finishScreen").style.display="flex"
+
+document.getElementById("finishTime").innerText=getWorkoutDuration()
+
+return
 }
 
 show()
@@ -305,7 +371,6 @@ startRecovery(60,false)
 function startRecovery(seconds,changeExercise){
 
 let screen=document.getElementById("recoveryScreen")
-
 let timer=document.getElementById("recoveryTimer")
 
 screen.style.display="flex"
@@ -315,7 +380,6 @@ timer.innerText=seconds
 let interval=setInterval(function(){
 
 seconds--
-
 timer.innerText=seconds
 
 if(seconds<=0){
@@ -325,7 +389,6 @@ clearInterval(interval)
 screen.style.display="none"
 
 let beep=new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
-
 beep.play()
 
 if(changeExercise){
