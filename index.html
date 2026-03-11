@@ -1,12 +1,20 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
 
 <meta charset="UTF-8">
+
 <title>Workout</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Workout">
+
+<link rel="manifest" href="manifest.json">
 
 <style>
 
@@ -146,26 +154,18 @@ margin-top:10px;
 <body>
 
 <div id="recoveryScreen">
-
 <div style="font-size:28px;margin-bottom:20px">RECUPERO</div>
 <div id="recoveryTimer">60</div>
-
 </div>
 
 <div id="finishScreen">
-
 <h1>Allenamento completato 💪</h1>
-
 <div>Durata allenamento</div>
-
 <div id="finishTime"></div>
-
 </div>
 
 <div class="header">
-
 🏋️ Workout
-
 </div>
 
 <div class="container">
@@ -216,267 +216,13 @@ margin-top:10px;
 
 <script>
 
-let exercises=[]
-let index=0
-let currentSet=0
-let startTime=0
-let workoutMode=false
+// SERVICE WORKER OFFLINE
 
-function startTimerWorkout(){
-startTime=Date.now()
-}
-
-function duration(){
-
-let s=Math.floor((Date.now()-startTime)/1000)
-let m=Math.floor(s/60)
-let sec=s%60
-
-if(sec<10)sec="0"+sec
-
-return m+":"+sec
-
-}
-
-function updateProgress(){
-
-let p=((index+1)/exercises.length)*100
-
-document.getElementById("progress").style.width=p+"%"
-
-}
-
-function startGuided(){
-
-let last=localStorage.getItem("lastWorkout")
-
-if(last=="A"){
-
-startWorkoutB()
-localStorage.setItem("lastWorkout","B")
-
-}else{
-
-startWorkoutA()
-localStorage.setItem("lastWorkout","A")
-
-}
-
-}
-
-function startWarmup(){
-
-workoutMode=false
-
-document.getElementById("weightArea").style.display="none"
-
-exercises=[
-
-{i:"🧘",n:"Mobilità",d:"Gatto – Sfinge",sets:2},
-{i:"⚡",n:"Skip basso",d:"20 sec",sets:2},
-{i:"⚡",n:"Skip alto",d:"20 sec",sets:2},
-{i:"⚡",n:"Calciata",d:"20 sec",sets:2},
-{i:"🦴",n:"Flessione lombare",d:"10 rip",sets:2},
-{i:"🏃",n:"Tapis roulant",d:"10 min",sets:1}
-
-]
-
-index=0
-currentSet=0
-
-show()
-
-}
-
-function startWorkoutA(){
-
-workoutMode=true
-startTimerWorkout()
-
-document.getElementById("weightArea").style.display="block"
-
-exercises=[
-
-{i:"🏋️",n:"Squat",d:"10 rip",sets:4},
-{i:"🏋️",n:"Sumo Squat",d:"10 rip",sets:4},
-{i:"🚶",n:"Affondi",d:"10 rip",sets:3},
-{i:"🏋️",n:"Stacco Rumeno",d:"10 rip",sets:3}
-
-]
-
-index=0
-currentSet=0
-
-show()
-
-}
-
-function startWorkoutB(){
-
-workoutMode=true
-startTimerWorkout()
-
-document.getElementById("weightArea").style.display="block"
-
-exercises=[
-
-{i:"💪",n:"Push Up",d:"10 rip",sets:4},
-{i:"💪",n:"Lat Machine",d:"10 rip",sets:4},
-{i:"💪",n:"Pull Down",d:"10 rip",sets:4},
-{i:"🏋️",n:"Shoulder Press",d:"12 rip",sets:3},
-{i:"💪",n:"Alzate Laterali",d:"10 rip",sets:3},
-{i:"💪",n:"Rematore",d:"10 rip",sets:3},
-{i:"🦵",n:"Leg Extension",d:"12 rip",sets:3},
-{i:"🦵",n:"Leg Curl",d:"12 rip",sets:3}
-
-]
-
-index=0
-currentSet=0
-
-show()
-
-}
-
-function startCore(){
-
-workoutMode=false
-
-document.getElementById("weightArea").style.display="none"
-
-startTimerWorkout()
-
-exercises=[
-
-{i:"🧠",n:"Dead Bug",d:"30 sec",sets:3},
-{i:"🔥",n:"Mountain Climber",d:"30 sec",sets:3},
-{i:"🧠",n:"Plank SX",d:"30 sec",sets:3},
-{i:"🧠",n:"Plank DX",d:"30 sec",sets:3}
-
-]
-
-index=0
-currentSet=0
-
-show()
-
-}
-
-function show(){
-
-let ex=exercises[index]
-
-document.getElementById("icon").innerText=ex.i
-document.getElementById("exercise").innerText=ex.n
-document.getElementById("details").innerText=ex.d
-document.getElementById("series").innerText="Serie "+(currentSet+1)+" / "+ex.sets
-
-updateProgress()
-
-loadWeight()
-
-}
-
-function saveWeight(){
-
-let name=exercises[index].n
-let weight=document.getElementById("weightInput").value
-
-localStorage.setItem(name,weight)
-
-loadWeight()
-
-}
-
-function loadWeight(){
-
-let name=exercises[index].n
-
-let saved=localStorage.getItem(name)
-
-if(saved){
-
-document.getElementById("lastWeight").innerText="Ultimo peso: "+saved+" kg"
-
-}else{
-
-document.getElementById("lastWeight").innerText=""
-
-}
-
-document.getElementById("weightInput").value=""
-
-}
-
-function nextExercise(){
-
-index++
-currentSet=0
-
-if(index>=exercises.length){
-
-document.getElementById("finishScreen").style.display="flex"
-document.getElementById("finishTime").innerText=duration()
-
-return
-
-}
-
-show()
-
-}
-
-function completeSet(){
-
-let ex=exercises[index]
-
-currentSet++
-
-if(currentSet>=ex.sets){
-
-recovery(90,true)
-
-}else{
-
-show()
-recovery(60,false)
-
-}
-
-}
-
-function recovery(sec,next){
-
-let screen=document.getElementById("recoveryScreen")
-let timer=document.getElementById("recoveryTimer")
-
-screen.style.display="flex"
-timer.innerText=sec
-
-let i=setInterval(function(){
-
-sec--
-timer.innerText=sec
-
-if(sec<=0){
-
-clearInterval(i)
-
-screen.style.display="none"
-
-let beep=new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
-beep.play()
-
-if(next)nextExercise()
-
-}
-
-},1000)
-
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('service-worker.js');
 }
 
 </script>
 
 </body>
-
 </html>
