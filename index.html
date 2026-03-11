@@ -64,7 +64,7 @@ opacity:0.9;
 }
 
 .timer{
-font-size:34px;
+font-size:36px;
 margin-top:10px;
 }
 
@@ -130,7 +130,7 @@ font-size:14px;
 
 <div class="card">
 
-⏱ Timer recupero
+⏱ Recupero
 
 <div class="timer" id="timer"></div>
 
@@ -143,25 +143,8 @@ font-size:14px;
 let exercises=[]
 let index=0
 let currentSet=0
-let wakeLock=null
-
-async function keepScreenOn(){
-
-try{
-
-wakeLock = await navigator.wakeLock.request("screen")
-
-}catch(err){
-
-console.log("Wake lock non supportato")
-
-}
-
-}
 
 function startGuided(){
-
-keepScreenOn()
 
 let last=localStorage.getItem("lastWorkout")
 
@@ -176,8 +159,6 @@ localStorage.setItem("lastWorkout","A")
 }
 
 function startWarmup(){
-
-keepScreenOn()
 
 exercises=[
 
@@ -198,14 +179,10 @@ show()
 
 function startWorkoutA(){
 
-keepScreenOn()
-
 exercises=[
 
 {i:"🏋️",n:"Squat",d:"10 ripetizioni",sets:4},
 {i:"🏋️",n:"Sumo Squat",d:"10 ripetizioni",sets:4},
-{i:"🦵",n:"Leg Extension",d:"12 ripetizioni",sets:3},
-{i:"🦵",n:"Leg Curl",d:"12 ripetizioni",sets:3},
 {i:"🚶",n:"Affondi",d:"10 ripetizioni",sets:3},
 {i:"🏋️",n:"Stacco Rumeno",d:"10 ripetizioni",sets:3}
 
@@ -219,8 +196,6 @@ show()
 
 function startWorkoutB(){
 
-keepScreenOn()
-
 exercises=[
 
 {i:"💪",n:"Push Up",d:"10 ripetizioni",sets:4},
@@ -228,7 +203,9 @@ exercises=[
 {i:"💪",n:"Pull Down",d:"10 ripetizioni",sets:4},
 {i:"🏋️",n:"Shoulder Press",d:"12 ripetizioni",sets:3},
 {i:"💪",n:"Alzate Laterali",d:"10 ripetizioni",sets:3},
-{i:"💪",n:"Rematore",d:"10 ripetizioni",sets:3}
+{i:"💪",n:"Rematore",d:"10 ripetizioni",sets:3},
+{i:"🦵",n:"Leg Extension",d:"12 ripetizioni",sets:3},
+{i:"🦵",n:"Leg Curl",d:"12 ripetizioni",sets:3}
 
 ]
 
@@ -239,8 +216,6 @@ show()
 }
 
 function startCore(){
-
-keepScreenOn()
 
 exercises=[
 
@@ -277,17 +252,7 @@ document.getElementById("warning").innerText=""
 
 }
 
-function completeSet(){
-
-let ex=exercises[index]
-
-currentSet++
-
-startTimer(90)
-
-if(currentSet>=ex.sets){
-
-setTimeout(function(){
+function nextExercise(){
 
 index++
 currentSet=0
@@ -298,11 +263,23 @@ index=0
 
 show()
 
-},90000)
+}
+
+function completeSet(){
+
+let ex=exercises[index]
+
+currentSet++
+
+if(currentSet>=ex.sets){
+
+startTimer(120,true)
 
 }else{
 
 show()
+
+startTimer(60,false)
 
 }
 
@@ -310,7 +287,7 @@ show()
 
 let countdown
 
-function startTimer(seconds){
+function startTimer(seconds,changeExercise){
 
 clearInterval(countdown)
 
@@ -336,6 +313,10 @@ beep.play()
 
 if(navigator.vibrate){
 navigator.vibrate(500)
+}
+
+if(changeExercise){
+nextExercise()
 }
 
 }
