@@ -149,10 +149,8 @@ font-size:48px;
 <div id="finishScreen">
 
 <h1>Allenamento completato 💪</h1>
-
 <div>Durata allenamento</div>
-
-<div id="finishTime">00:00</div>
+<div id="finishTime"></div>
 
 </div>
 
@@ -190,13 +188,13 @@ font-size:48px;
 
 <div class="series" id="series"></div>
 
-<div id="weightSection">
+<div id="weightArea">
 
-<p>Peso utilizzato</p>
+<p>Peso</p>
 
 <input id="weightInput" type="number">
 
-<button onclick="saveWeight()">Salva peso</button>
+<button onclick="saveWeight()">Salva</button>
 
 </div>
 
@@ -219,27 +217,25 @@ let startTime=0
 let workoutMode=false
 
 function startTimerWorkout(){
-
 startTime=Date.now()
-
 }
 
 function getWorkoutDuration(){
 
-let seconds=Math.floor((Date.now()-startTime)/1000)
+let sec=Math.floor((Date.now()-startTime)/1000)
 
-let min=Math.floor(seconds/60)
-let sec=seconds%60
+let min=Math.floor(sec/60)
+let s=sec%60
 
-if(sec<10){sec="0"+sec}
+if(s<10)s="0"+s
 
-return min+":"+sec
+return min+":"+s
 
 }
 
 function updateProgress(){
 
-let percent=((index)/exercises.length)*100
+let percent=((index+1)/exercises.length)*100
 
 document.getElementById("progress").style.width=percent+"%"
 
@@ -247,13 +243,27 @@ document.getElementById("progress").style.width=percent+"%"
 
 function startGuided(){
 
+let last=localStorage.getItem("lastWorkout")
+
+if(last=="A"){
+
 startWorkoutB()
+localStorage.setItem("lastWorkout","B")
+
+}else{
+
+startWorkoutA()
+localStorage.setItem("lastWorkout","A")
+
+}
 
 }
 
 function startWarmup(){
 
 workoutMode=false
+
+document.getElementById("weightArea").style.display="none"
 
 exercises=[
 
@@ -269,8 +279,6 @@ exercises=[
 index=0
 currentSet=0
 
-document.getElementById("weightSection").style.display="none"
-
 show()
 
 }
@@ -278,7 +286,10 @@ show()
 function startWorkoutA(){
 
 workoutMode=true
+
 startTimerWorkout()
+
+document.getElementById("weightArea").style.display="block"
 
 exercises=[
 
@@ -292,8 +303,6 @@ exercises=[
 index=0
 currentSet=0
 
-document.getElementById("weightSection").style.display="block"
-
 show()
 
 }
@@ -301,7 +310,10 @@ show()
 function startWorkoutB(){
 
 workoutMode=true
+
 startTimerWorkout()
+
+document.getElementById("weightArea").style.display="block"
 
 exercises=[
 
@@ -318,8 +330,6 @@ exercises=[
 
 index=0
 currentSet=0
-
-document.getElementById("weightSection").style.display="block"
 
 show()
 
@@ -343,30 +353,24 @@ loadWeight()
 
 function saveWeight(){
 
-let exercise=exercises[index].n
-let weight=document.getElementById("weightInput").value
+if(!workoutMode)return
 
-localStorage.setItem(exercise,weight)
+let ex=exercises[index].n
+let w=document.getElementById("weightInput").value
+
+localStorage.setItem(ex,w)
 
 }
 
 function loadWeight(){
 
-if(!workoutMode) return
+if(!workoutMode)return
 
-let exercise=exercises[index].n
+let ex=exercises[index].n
 
-let saved=localStorage.getItem(exercise)
+let saved=localStorage.getItem(ex)
 
-if(saved){
-
-document.getElementById("weightInput").value=saved
-
-}else{
-
-document.getElementById("weightInput").value=""
-
-}
+document.getElementById("weightInput").value=saved?saved:""
 
 }
 
@@ -409,33 +413,31 @@ startRecovery(60,false)
 
 }
 
-function startRecovery(seconds,changeExercise){
+function startRecovery(sec,next){
 
 let screen=document.getElementById("recoveryScreen")
 let timer=document.getElementById("recoveryTimer")
 
 screen.style.display="flex"
 
-timer.innerText=seconds
+timer.innerText=sec
 
 let interval=setInterval(function(){
 
-seconds--
+sec--
+timer.innerText=sec
 
-timer.innerText=seconds
-
-if(seconds<=0){
+if(sec<=0){
 
 clearInterval(interval)
 
 screen.style.display="none"
 
 let beep=new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
+
 beep.play()
 
-if(changeExercise){
-nextExercise()
-}
+if(next)nextExercise()
 
 }
 
