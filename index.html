@@ -5,14 +5,12 @@
 <head>
 
 <meta charset="UTF-8">
-
 <title>Workout</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Workout">
 
 <link rel="manifest" href="manifest.json">
 
@@ -23,10 +21,10 @@ font-family:-apple-system,BlinkMacSystemFont,sans-serif;
 background:#0f172a;
 margin:0;
 color:white;
+text-align:center;
 }
 
 .header{
-text-align:center;
 padding:20px;
 font-size:26px;
 font-weight:bold;
@@ -58,24 +56,12 @@ color:white;
 background:#3b82f6;
 }
 
-.exerciseIcon{
-font-size:48px;
-text-align:center;
-}
-
-.exerciseName{
-font-size:24px;
-text-align:center;
-margin-top:6px;
-}
-
-.exerciseDetails{
-text-align:center;
-opacity:0.8;
+.exercise{
+font-size:26px;
+margin-top:10px;
 }
 
 .series{
-text-align:center;
 margin-top:10px;
 font-size:18px;
 }
@@ -90,79 +76,11 @@ font-size:18px;
 text-align:center;
 }
 
-#lastWeight{
-text-align:center;
-font-size:14px;
-opacity:0.7;
-margin-top:4px;
-}
-
-#progressBar{
-height:10px;
-background:#334155;
-border-radius:10px;
-margin-bottom:10px;
-}
-
-#progress{
-height:10px;
-background:#22c55e;
-border-radius:10px;
-width:0%;
-}
-
-#recoveryScreen{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#020617;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-}
-
-#recoveryTimer{
-font-size:120px;
-font-weight:bold;
-}
-
-#finishScreen{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#020617;
-display:none;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-}
-
-#finishTime{
-font-size:50px;
-margin-top:10px;
-}
-
 </style>
 
 </head>
 
 <body>
-
-<div id="recoveryScreen">
-<div style="font-size:28px;margin-bottom:20px">RECUPERO</div>
-<div id="recoveryTimer">60</div>
-</div>
-
-<div id="finishScreen">
-<h1>Allenamento completato 💪</h1>
-<div>Durata allenamento</div>
-<div id="finishTime"></div>
-</div>
 
 <div class="header">
 🏋️ Workout
@@ -172,41 +90,21 @@ margin-top:10px;
 
 <div class="card">
 
-<button onclick="startGuided()">Allenamento di oggi</button>
-
-<button onclick="startWarmup()">Riscaldamento</button>
-
-<button onclick="startWorkoutA()">Gambe</button>
-
-<button onclick="startWorkoutB()">Parte alta</button>
-
-<button onclick="startCore()">Core</button>
+<button onclick="startWarmup()">Riscaldamento</button> <button onclick="startWorkoutA()">Gambe</button> <button onclick="startWorkoutB()">Parte alta</button> <button onclick="startCore()">Core</button>
 
 </div>
 
 <div class="card">
 
-<div id="progressBar">
-<div id="progress"></div>
+<div class="exercise" id="exercise">
+Seleziona allenamento
 </div>
-
-<div class="exerciseIcon" id="icon"></div>
-
-<div class="exerciseName" id="exercise"></div>
-
-<div class="exerciseDetails" id="details"></div>
 
 <div class="series" id="series"></div>
 
-<div id="weightArea">
-
 <input id="weightInput" placeholder="Peso">
 
-<div id="lastWeight"></div>
-
 <button class="secondary" onclick="saveWeight()">Salva peso</button>
-
-</div>
 
 <button onclick="completeSet()">Serie completata</button>
 
@@ -216,13 +114,137 @@ margin-top:10px;
 
 <script>
 
-// SERVICE WORKER OFFLINE
-
 if ('serviceWorker' in navigator) {
 navigator.serviceWorker.register('service-worker.js');
+}
+
+let exercises=[]
+let index=0
+let currentSet=1
+
+function startWarmup(){
+
+exercises=[
+{name:"Mobilità",sets:2},
+{name:"Skip basso",sets:2},
+{name:"Skip alto",sets:2},
+{name:"Calciata",sets:2},
+{name:"Flessione lombare",sets:2},
+{name:"Tapis roulant",sets:1}
+]
+
+startWorkout()
+
+}
+
+function startWorkoutA(){
+
+exercises=[
+{name:"Squat",sets:4},
+{name:"Sumo squat",sets:4},
+{name:"Affondi",sets:3},
+{name:"Stacco rumeno",sets:3}
+]
+
+startWorkout()
+
+}
+
+function startWorkoutB(){
+
+exercises=[
+{name:"Push up",sets:4},
+{name:"Lat machine",sets:4},
+{name:"Pull down",sets:4},
+{name:"Shoulder press",sets:3},
+{name:"Alzate laterali",sets:3},
+{name:"Rematore",sets:3},
+{name:"Leg extension",sets:3},
+{name:"Leg curl",sets:3}
+]
+
+startWorkout()
+
+}
+
+function startCore(){
+
+exercises=[
+{name:"Dead bug",sets:3},
+{name:"Mountain climber",sets:3},
+{name:"Plank sx",sets:3},
+{name:"Plank dx",sets:3}
+]
+
+startWorkout()
+
+}
+
+function startWorkout(){
+
+index=0
+currentSet=1
+updateExercise()
+
+}
+
+function updateExercise(){
+
+let ex=exercises[index]
+
+document.getElementById("exercise").innerText=ex.name
+document.getElementById("series").innerText="Serie "+currentSet+" / "+ex.sets
+
+loadWeight()
+
+}
+
+function completeSet(){
+
+let ex=exercises[index]
+
+if(currentSet<ex.sets){
+
+currentSet++
+
+}else{
+
+index++
+currentSet=1
+
+}
+
+if(index>=exercises.length){
+
+alert("Allenamento completato 💪")
+return
+
+}
+
+updateExercise()
+
+}
+
+function saveWeight(){
+
+let name=exercises[index].name
+let weight=document.getElementById("weightInput").value
+
+localStorage.setItem(name,weight)
+
+}
+
+function loadWeight(){
+
+let name=exercises[index].name
+let saved=localStorage.getItem(name)
+
+document.getElementById("weightInput").value=saved?saved:""
+
 }
 
 </script>
 
 </body>
+
 </html>
