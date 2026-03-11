@@ -128,6 +128,7 @@ Seleziona allenamento
 let exercises=[]
 let index=0
 let currentSet=1
+let timerInterval=null
 
 function startWorkoutB(){
 
@@ -211,6 +212,7 @@ startTimer(ex.time)
 
 }else{
 
+stopTimer()
 document.getElementById("timer").innerText=""
 
 }
@@ -220,6 +222,8 @@ document.getElementById("timer").innerText=""
 function completeSet(){
 
 let ex=exercises[index]
+
+stopTimer()
 
 if(currentSet<ex.sets){
 
@@ -245,22 +249,34 @@ updateExercise()
 
 function startTimer(sec){
 
+stopTimer()
+
 let timer=document.getElementById("timer")
 
 timer.innerText=sec
 
-let interval=setInterval(function(){
+timerInterval=setInterval(function(){
 
 sec--
 timer.innerText=sec
 
 if(sec<=0){
 
-clearInterval(interval)
+clearInterval(timerInterval)
+timerInterval=null
 
 }
 
 },1000)
+
+}
+
+function stopTimer(){
+
+if(timerInterval){
+clearInterval(timerInterval)
+timerInterval=null
+}
 
 }
 
