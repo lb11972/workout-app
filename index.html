@@ -4,16 +4,9 @@
 <head>
 
 <meta charset="UTF-8">
-
 <title>Workout App</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-<meta name="apple-mobile-web-app-title" content="Workout">
 
 <style>
 
@@ -75,14 +68,18 @@ font-size:34px;
 margin-top:10px;
 }
 
-.warning{
-color:#f87171;
+.series{
+font-size:18px;
 margin-top:10px;
-font-size:14px;
 }
 
 .icon{
 font-size:36px;
+}
+
+.warning{
+color:#f87171;
+font-size:14px;
 }
 
 </style>
@@ -119,16 +116,14 @@ font-size:36px;
 
 <div class="details" id="details"></div>
 
+<div class="series" id="series"></div>
+
 <div class="warning" id="warning"></div>
 
 <br>
 
 <button onclick="completeSet()" class="secondary">
 ✔ Serie completata
-</button>
-
-<button onclick="nextExercise()" class="secondary">
-▶ Prossimo esercizio
 </button>
 
 </div>
@@ -139,10 +134,6 @@ font-size:36px;
 
 <div class="timer" id="timer"></div>
 
-<button onclick="startTimer(60)">60s</button>
-
-<button onclick="startTimer(90)">90s</button>
-
 </div>
 
 </div>
@@ -151,8 +142,26 @@ font-size:36px;
 
 let exercises=[]
 let index=0
+let currentSet=0
+let wakeLock=null
+
+async function keepScreenOn(){
+
+try{
+
+wakeLock = await navigator.wakeLock.request("screen")
+
+}catch(err){
+
+console.log("Wake lock non supportato")
+
+}
+
+}
 
 function startGuided(){
+
+keepScreenOn()
 
 let last=localStorage.getItem("lastWorkout")
 
@@ -168,70 +177,82 @@ localStorage.setItem("lastWorkout","A")
 
 function startWarmup(){
 
+keepScreenOn()
+
 exercises=[
 
-{i:"🧘",n:"Mobilità",d:"Gatto – Sfinge / Devoto"},
-{i:"🏃",n:"Tapis roulant",d:"10 min"},
-{i:"⚡",n:"Skip basso",d:"20 sec"},
-{i:"⚡",n:"Skip alto",d:"20 sec"},
-{i:"⚡",n:"Calciata",d:"20 sec"},
-{i:"🦴",n:"Flessione lombare",d:"2 serie"}
+{i:"🧘",n:"Mobilità",d:"Gatto – Sfinge",sets:1},
+{i:"🏃",n:"Tapis roulant",d:"10 min",sets:1},
+{i:"⚡",n:"Skip basso",d:"20 sec",sets:1},
+{i:"⚡",n:"Skip alto",d:"20 sec",sets:1},
+{i:"⚡",n:"Calciata",d:"20 sec",sets:1},
+{i:"🦴",n:"Flessione lombare",d:"2 serie",sets:2}
 
 ]
 
 index=0
+currentSet=0
 show()
 
 }
 
 function startWorkoutA(){
 
+keepScreenOn()
+
 exercises=[
 
-{i:"🏋️",n:"Squat",d:"4 x 10"},
-{i:"🏋️",n:"Sumo Squat",d:"4 x 10"},
-{i:"🦵",n:"Leg Extension",d:"3 x 12"},
-{i:"🦵",n:"Leg Curl",d:"3 x 12"},
-{i:"🚶",n:"Affondi",d:"3 x 10"},
-{i:"🏋️",n:"Stacco Rumeno",d:"3 x 10"}
+{i:"🏋️",n:"Squat",d:"10 ripetizioni",sets:4},
+{i:"🏋️",n:"Sumo Squat",d:"10 ripetizioni",sets:4},
+{i:"🦵",n:"Leg Extension",d:"12 ripetizioni",sets:3},
+{i:"🦵",n:"Leg Curl",d:"12 ripetizioni",sets:3},
+{i:"🚶",n:"Affondi",d:"10 ripetizioni",sets:3},
+{i:"🏋️",n:"Stacco Rumeno",d:"10 ripetizioni",sets:3}
 
 ]
 
 index=0
+currentSet=0
 show()
 
 }
 
 function startWorkoutB(){
 
+keepScreenOn()
+
 exercises=[
 
-{i:"💪",n:"Push Up",d:"4 x 10"},
-{i:"💪",n:"Lat Machine",d:"4 x 10"},
-{i:"💪",n:"Pull Down",d:"4 x 10"},
-{i:"🏋️",n:"Shoulder Press",d:"3 x 12"},
-{i:"💪",n:"Alzate Laterali",d:"3 x 10"},
-{i:"💪",n:"Rematore",d:"3 x 10"}
+{i:"💪",n:"Push Up",d:"10 ripetizioni",sets:4},
+{i:"💪",n:"Lat Machine",d:"10 ripetizioni",sets:4},
+{i:"💪",n:"Pull Down",d:"10 ripetizioni",sets:4},
+{i:"🏋️",n:"Shoulder Press",d:"12 ripetizioni",sets:3},
+{i:"💪",n:"Alzate Laterali",d:"10 ripetizioni",sets:3},
+{i:"💪",n:"Rematore",d:"10 ripetizioni",sets:3}
 
 ]
 
 index=0
+currentSet=0
 show()
 
 }
 
 function startCore(){
 
+keepScreenOn()
+
 exercises=[
 
-{i:"🧠",n:"Dead Bug",d:"30 sec"},
-{i:"🔥",n:"Mountain Climber",d:"30 sec"},
-{i:"🧠",n:"Plank SX",d:"30 sec"},
-{i:"🧠",n:"Plank DX",d:"30 sec"}
+{i:"🧠",n:"Dead Bug",d:"30 sec",sets:3},
+{i:"🔥",n:"Mountain Climber",d:"30 sec",sets:3},
+{i:"🧠",n:"Plank SX",d:"30 sec",sets:3},
+{i:"🧠",n:"Plank DX",d:"30 sec",sets:3}
 
 ]
 
 index=0
+currentSet=0
 show()
 
 }
@@ -244,6 +265,8 @@ document.getElementById("icon").innerText=ex.i
 document.getElementById("exercise").innerText=ex.n
 document.getElementById("details").innerText=ex.d
 
+document.getElementById("series").innerText="Serie: "+(currentSet+1)+" / "+ex.sets
+
 let risk=["Squat","Stacco Rumeno","Affondi"]
 
 if(risk.includes(ex.n)){
@@ -254,9 +277,20 @@ document.getElementById("warning").innerText=""
 
 }
 
-function nextExercise(){
+function completeSet(){
+
+let ex=exercises[index]
+
+currentSet++
+
+startTimer(90)
+
+if(currentSet>=ex.sets){
+
+setTimeout(function(){
 
 index++
+currentSet=0
 
 if(index>=exercises.length){
 index=0
@@ -264,11 +298,13 @@ index=0
 
 show()
 
+},90000)
+
+}else{
+
+show()
+
 }
-
-function completeSet(){
-
-startTimer(90)
 
 }
 
