@@ -9,11 +9,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-<link rel="manifest" href="manifest.json">
-
 <style>
 
 body{
@@ -66,14 +61,9 @@ margin-top:10px;
 font-size:18px;
 }
 
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:none;
+.timer{
+font-size:40px;
 margin-top:10px;
-font-size:18px;
-text-align:center;
 }
 
 </style>
@@ -90,7 +80,7 @@ text-align:center;
 
 <div class="card">
 
-<button onclick="startWarmup()">Riscaldamento</button> <button onclick="startWorkoutA()">Gambe</button> <button onclick="startWorkoutB()">Parte alta</button> <button onclick="startCore()">Core</button>
+<button onclick="startWorkoutB()">Parte alta</button> <button onclick="startWorkoutA()">Gambe</button> <button onclick="startCore()">Core</button>
 
 </div>
 
@@ -102,9 +92,7 @@ Seleziona allenamento
 
 <div class="series" id="series"></div>
 
-<input id="weightInput" placeholder="Peso">
-
-<button class="secondary" onclick="saveWeight()">Salva peso</button>
+<div class="timer" id="timer"></div>
 
 <button onclick="completeSet()">Serie completata</button>
 
@@ -114,23 +102,27 @@ Seleziona allenamento
 
 <script>
 
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('service-worker.js');
-}
-
 let exercises=[]
 let index=0
 let currentSet=1
 
-function startWarmup(){
+function startWorkoutB(){
 
 exercises=[
-{name:"Mobilità",sets:2},
-{name:"Skip basso",sets:2},
-{name:"Skip alto",sets:2},
-{name:"Calciata",sets:2},
-{name:"Flessione lombare",sets:2},
-{name:"Tapis roulant",sets:1}
+
+{name:"Gatto Sfinge Devoto",sets:2,time:30},
+{name:"Rotazioni cervicali",sets:2,time:30},
+{name:"Squat libero",sets:2,time:30},
+
+{name:"Push up",sets:4},
+{name:"Lat machine",sets:4},
+{name:"Pull down",sets:4},
+{name:"Shoulder press",sets:3},
+{name:"Alzate laterali",sets:3},
+{name:"Rematore",sets:3},
+{name:"Leg extension",sets:3},
+{name:"Leg curl",sets:3}
+
 ]
 
 startWorkout()
@@ -140,27 +132,17 @@ startWorkout()
 function startWorkoutA(){
 
 exercises=[
+
+{name:"Skip basso",sets:2,time:30},
+{name:"Skip alto",sets:2,time:30},
+{name:"Calciata sul posto",sets:2,time:30},
+{name:"Saltelli a due piedi",sets:2,time:30},
+
 {name:"Squat",sets:4},
 {name:"Sumo squat",sets:4},
 {name:"Affondi",sets:3},
 {name:"Stacco rumeno",sets:3}
-]
 
-startWorkout()
-
-}
-
-function startWorkoutB(){
-
-exercises=[
-{name:"Push up",sets:4},
-{name:"Lat machine",sets:4},
-{name:"Pull down",sets:4},
-{name:"Shoulder press",sets:3},
-{name:"Alzate laterali",sets:3},
-{name:"Rematore",sets:3},
-{name:"Leg extension",sets:3},
-{name:"Leg curl",sets:3}
 ]
 
 startWorkout()
@@ -170,10 +152,12 @@ startWorkout()
 function startCore(){
 
 exercises=[
-{name:"Dead bug",sets:3},
-{name:"Mountain climber",sets:3},
-{name:"Plank sx",sets:3},
-{name:"Plank dx",sets:3}
+
+{name:"Dead bug",sets:3,time:30},
+{name:"Mountain climber",sets:3,time:30},
+{name:"Plank sx",sets:3,time:30},
+{name:"Plank dx",sets:3,time:30}
+
 ]
 
 startWorkout()
@@ -184,6 +168,7 @@ function startWorkout(){
 
 index=0
 currentSet=1
+
 updateExercise()
 
 }
@@ -195,7 +180,15 @@ let ex=exercises[index]
 document.getElementById("exercise").innerText=ex.name
 document.getElementById("series").innerText="Serie "+currentSet+" / "+ex.sets
 
-loadWeight()
+if(ex.time){
+
+startTimer(ex.time)
+
+}else{
+
+document.getElementById("timer").innerText=""
+
+}
 
 }
 
@@ -225,21 +218,25 @@ updateExercise()
 
 }
 
-function saveWeight(){
+function startTimer(sec){
 
-let name=exercises[index].name
-let weight=document.getElementById("weightInput").value
+let timer=document.getElementById("timer")
 
-localStorage.setItem(name,weight)
+timer.innerText=sec
+
+let interval=setInterval(function(){
+
+sec--
+
+timer.innerText=sec
+
+if(sec<=0){
+
+clearInterval(interval)
 
 }
 
-function loadWeight(){
-
-let name=exercises[index].name
-let saved=localStorage.getItem(name)
-
-document.getElementById("weightInput").value=saved?saved:""
+},1000)
 
 }
 
