@@ -63,11 +63,6 @@ font-size:18px;
 opacity:0.9;
 }
 
-.timer{
-font-size:36px;
-margin-top:10px;
-}
-
 .series{
 font-size:18px;
 margin-top:10px;
@@ -82,11 +77,49 @@ color:#f87171;
 font-size:14px;
 }
 
+#recoveryScreen{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#020617;
+display:none;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+z-index:999;
+
+}
+
+#recoveryTimer{
+
+font-size:120px;
+font-weight:bold;
+
+}
+
+#recoveryText{
+
+font-size:30px;
+margin-bottom:20px;
+
+}
+
 </style>
 
 </head>
 
 <body>
+
+<div id="recoveryScreen">
+
+<div id="recoveryText">RECUPERO</div>
+
+<div id="recoveryTimer">60</div>
+
+</div>
 
 <div class="header">
 🏋️ Workout App
@@ -128,14 +161,6 @@ font-size:14px;
 
 </div>
 
-<div class="card">
-
-⏱ Recupero
-
-<div class="timer" id="timer"></div>
-
-</div>
-
 </div>
 
 <script>
@@ -162,12 +187,12 @@ function startWarmup(){
 
 exercises=[
 
-{i:"🧘",n:"Mobilità",d:"Gatto – Sfinge",sets:1},
-{i:"🏃",n:"Tapis roulant",d:"10 min",sets:1},
-{i:"⚡",n:"Skip basso",d:"20 sec",sets:1},
-{i:"⚡",n:"Skip alto",d:"20 sec",sets:1},
-{i:"⚡",n:"Calciata",d:"20 sec",sets:1},
-{i:"🦴",n:"Flessione lombare",d:"2 serie",sets:2}
+{i:"🧘",n:"Mobilità",d:"Gatto – Sfinge",sets:2},
+{i:"⚡",n:"Skip basso",d:"20 sec",sets:2},
+{i:"⚡",n:"Skip alto",d:"20 sec",sets:2},
+{i:"⚡",n:"Calciata",d:"20 sec",sets:2},
+{i:"🦴",n:"Flessione lombare",d:"10 ripetizioni",sets:2},
+{i:"🏃",n:"Tapis roulant",d:"10 min",sets:1}
 
 ]
 
@@ -242,14 +267,6 @@ document.getElementById("details").innerText=ex.d
 
 document.getElementById("series").innerText="Serie: "+(currentSet+1)+" / "+ex.sets
 
-let risk=["Squat","Stacco Rumeno","Affondi"]
-
-if(risk.includes(ex.n)){
-document.getElementById("warning").innerText="⚠ Mantieni schiena neutra e addome attivo"
-}else{
-document.getElementById("warning").innerText=""
-}
-
 }
 
 function nextExercise(){
@@ -273,47 +290,43 @@ currentSet++
 
 if(currentSet>=ex.sets){
 
-startTimer(120,true)
+startRecovery(90,true)
 
 }else{
 
 show()
 
-startTimer(60,false)
+startRecovery(60,false)
 
 }
 
 }
 
-let countdown
+function startRecovery(seconds,changeExercise){
 
-function startTimer(seconds,changeExercise){
+let screen=document.getElementById("recoveryScreen")
 
-clearInterval(countdown)
+let timer=document.getElementById("recoveryTimer")
 
-let time=seconds
+screen.style.display="flex"
 
-document.getElementById("timer").innerText=time
+timer.innerText=seconds
 
-countdown=setInterval(function(){
+let interval=setInterval(function(){
 
-time--
+seconds--
 
-document.getElementById("timer").innerText=time
+timer.innerText=seconds
 
-if(time<=0){
+if(seconds<=0){
 
-clearInterval(countdown)
+clearInterval(interval)
 
-document.getElementById("timer").innerText="FINE"
+screen.style.display="none"
 
 let beep=new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg")
 
 beep.play()
-
-if(navigator.vibrate){
-navigator.vibrate(500)
-}
 
 if(changeExercise){
 nextExercise()
